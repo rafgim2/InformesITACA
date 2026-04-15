@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+
+<html lang="ca">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centre d'Avaluació Compartida</title>
+<style>
+    :root{
+      --bg:#edf4ff;
+      --bg2:#f9fbff;
+      --card:#ffffff;
+      --line:#d9e4f2;
+      --text:#1f2937;
+      --muted:#667085;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --violet:#7c3aed;
+      --ok:#0f9f6e;
+      --danger:#d14343;
+      --shadow:0 14px 32px rgba(26,42,79,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(37,99,235,.10), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(124,58,237,.08), transparent 26%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+      min-height:100vh;
+    }
+    .app{
+      display:grid;
+      grid-template-columns:360px 1fr;
+      gap:18px;
+      padding:18px;
+      min-height:100vh;
+    }
+    .sidebar,.main{
+      background:rgba(255,255,255,.84);
+      border:1px solid rgba(217,228,242,.95);
+      border-radius:26px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .sidebar{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      overflow:hidden;
+    }
+    .main{
+      padding:22px;
+      overflow:auto;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:18px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--primary),var(--violet));
+      color:#fff;font-weight:800;font-size:18px;
+      box-shadow:0 10px 24px rgba(37,99,235,.28);
+    }
+    .muted{color:var(--muted)}
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+    .soft{background:#f8fbff}
+    .stack{display:flex;flex-direction:column;gap:10px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .c12{grid-column:span 12}
+    .c8{grid-column:span 8}
+    .c6{grid-column:span 6}
+    .c4{grid-column:span 4}
+    .c3{grid-column:span 3}
+    .c2{grid-column:span 2}
+    @media (max-width:1100px){
+      .app{grid-template-columns:1fr}
+    }
+    @media (max-width:780px){
+      .c8,.c6,.c4,.c3,.c2{grid-column:span 12}
+    }
+    h1,h2,h3{margin:0}
+    h1{font-size:30px;line-height:1.08}
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-size:13px;
+      font-weight:700;
+      color:#334155;
+    }
+    input[type="text"],select,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      padding:11px 12px;
+      font-size:14px;
+      color:var(--text);
+      outline:none;
+      transition:.16s ease;
+    }
+    textarea{min-height:96px;resize:vertical}
+    input[type="text"]:focus,select:focus,textarea:focus{
+      border-color:#98b8ff;
+      box-shadow:0 0 0 4px rgba(37,99,235,.12);
+    }
+    button{
+      border:0;
+      border-radius:14px;
+      padding:11px 14px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.16s ease;
+    }
+    button:hover{transform:translateY(-1px)}
+    .primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+    .secondary{background:#eaf1ff;color:var(--primary)}
+    .ghost{background:#eef3f8;color:#334155}
+    .success{background:#eaf8f1;color:var(--ok)}
+    .danger{background:#fdecec;color:var(--danger)}
+    .full{width:100%}
+    .section-title{
+      display:flex;align-items:center;gap:10px;
+      font-size:17px;font-weight:800;margin-bottom:12px;
+    }
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 11px;border-radius:999px;
+      background:#eef4ff;color:#2450b8;font-size:12px;font-weight:700;
+      border:1px solid #d8e5ff;
+    }
+    .hero{
+      display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .hero-card{
+      min-width:320px;
+      background:linear-gradient(135deg,#f7faff,#fbf8ff);
+      border:1px solid #dbe5f5;
+      border-radius:20px;
+      padding:16px 18px;
+    }
+    .status{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#eff5ff;
+      color:#2450b8;
+      font-weight:700;
+      font-size:13px;
+    }
+    .divider{height:1px;background:var(--line);margin:14px 0}
+    .class-grid,.student-list{display:flex;flex-direction:column;gap:8px}
+    .class-item,.student-item{
+      background:#fff;border:1px solid var(--line);
+      border-radius:14px;padding:11px 12px;cursor:pointer;
+      transition:.15s ease;
+    }
+    .class-item:hover,.student-item:hover{transform:translateY(-1px)}
+    .class-item.active,.student-item.active{
+      background:#eef4ff;border-color:#a8c1ff;color:#1d4ed8;
+    }
+    .student-name{font-weight:700}
+    .student-meta{font-size:12px;color:var(--muted);margin-top:4px}
+    .subject-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:#fff;
+      margin-top:12px;
+    }
+    .subject-head{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .checkbox-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;
+    }
+    @media (max-width:780px){
+      .checkbox-grid{grid-template-columns:1fr}
+    }
+    .check{
+      display:flex;gap:8px;align-items:flex-start;
+      padding:8px 10px;background:#fafcff;border:1px solid #edf1f7;border-radius:12px;
+      font-size:13px;color:#334155;
+    }
+    .check input{margin-top:2px}
+    .empty{
+      padding:16px;border:1px dashed #cfd8e6;border-radius:16px;background:#fbfdff;color:#64748b
+    }
+    .small{font-size:12px;color:var(--muted)}
+    .preview{
+      min-height:280px;
+      font-family:Arial,Helvetica,sans-serif;
+      white-space:pre-wrap;
+      background:#fbfdff;
+    }
+    .sticky-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .tag{
+      padding:7px 10px;border-radius:999px;background:#f5f7fb;border:1px solid var(--line);
+      font-size:12px;font-weight:700;color:#475467;
+    }
+  
+    .subject-card:nth-child(1){border-left:6px solid #2563eb}
+    .subject-card:nth-child(2){border-left:6px solid #16a34a}
+    .subject-card:nth-child(3){border-left:6px solid #9333ea}
+    .subject-card:nth-child(4){border-left:6px solid #f59e0b}
+    .subject-card:nth-child(5){border-left:6px solid #ef4444}
+    .subject-card:nth-child(6){border-left:6px solid #0ea5e9}
+    .subject-card:nth-child(7){border-left:6px solid #10b981}
+    .subject-card:nth-child(8){border-left:6px solid #f43f5e}
+    .subject-card:nth-child(9){border-left:6px solid #8b5cf6}
+    .subject-card:nth-child(10){border-left:6px solid #22c55e}
+    .subject-card:nth-child(11){border-left:6px solid #eab308}
+
+
+    .hidden{display:none !important}
+    .auth-screen{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .auth-wrap{
+      width:min(1100px,100%);
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:20px;
+    }
+    .auth-card{
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(217,228,242,.95);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+      padding:24px;
+    }
+    .auth-hero{
+      background:linear-gradient(135deg,#f7faff,#fbf8ff);
+      border:1px solid #dbe5f5;
+    }
+    .auth-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .auth-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .info-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:14px;
+    }
+    .info-item{
+      padding:12px 14px;
+      border-radius:14px;
+      background:#f8fbff;
+      border:1px solid #e5edf8;
+      color:#334155;
+      font-size:14px;
+    }
+    .auth-title{
+      font-size:34px;
+      line-height:1.05;
+      margin-bottom:10px;
+    }
+    .app.hidden-before-login{
+      display:none;
+    }
+    .teacher-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eef4ff;
+      border:1px solid #d8e5ff;
+      color:#2450b8;
+      font-size:12px;
+      font-weight:800;
+    }
+    #teacherOnlyClassNote{
+      display:none;
+    }
+    .logout-btn{
+      margin-left:auto;
+    }
+    .specialist-box{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#f8fbff;
+      border:1px solid #dbe7f7;
+    }
+    .specialist-classes{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px 10px;
+      margin-top:8px;
+    }
+    .field-disabled{
+      opacity:.55;
+      pointer-events:none;
+      filter:grayscale(.15);
+    }
+    .subject-card.locked-specialist{
+      opacity:.45;
+    }
+    .specialist-note-banner{
+      display:none;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
+      font-size:13px;
+      font-weight:700;
+    }
+    input[type="password"]{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      padding:11px 12px;
+      font-size:14px;
+      color:var(--text);
+      outline:none;
+      transition:.16s ease;
+    }
+    input[type="password"]:focus{
+      border-color:#98b8ff;
+      box-shadow:0 0 0 4px rgba(37,99,235,.12);
+    }
+    @media (max-width:980px){
+      .auth-wrap{grid-template-columns:1fr}
+      .auth-grid{grid-template-columns:1fr}
+    }
+
+</style>
+<style>
+#saveTop.save-clean, #saveSide.save-clean{
+  background:#16a34a !important;
+  color:#ffffff !important;
+  border-color:#16a34a !important;
+}
+#saveTop.save-dirty, #saveSide.save-dirty{
+  background:#dc2626 !important;
+  color:#ffffff !important;
+  border-color:#dc2626 !important;
+}
+#saveTop.save-clean:hover, #saveSide.save-clean:hover{
+  background:#15803d !important;
+  color:#ffffff !important;
+  border-color:#15803d !important;
+}
+#saveTop.save-dirty:hover, #saveSide.save-dirty:hover{
+  background:#b91c1c !important;
+  color:#ffffff !important;
+  border-color:#b91c1c !important;
+}
+</style></head>
+<body>
+
+<div class="auth-screen" id="authScreen">
+  <div class="auth-wrap">
+    <section class="auth-card auth-hero stack">
+      <div class="brand">
+        <div class="logo">IT</div>
+        <div>
+          <div class="teacher-badge">Accés per mestre</div>
+          <h1 class="auth-title">GENERADOR D'INFORMES PER ITACA</h1>
+          <p class="muted" style="margin:0;max-width:700px;">
+            Abans d'entrar, cada mestre accedeix amb la seua contrasenya i només veu la seua classe. També es pot crear un mestre nou com a tutor o com a especialista, associant-lo a una o diverses classes.
+          </p>
+        </div>
+      </div>
+      <div class="info-list">
+        <div class="info-item"><strong>Entrar com a mestre</strong><br/>Selecciona el teu nom, escriu la contrasenya i entraràs directament a la teua classe.</div>
+        <div class="info-item"><strong>Crear mestre nou</strong><br/>Assigna un nom, una contrasenya i indica si serà tutor o especialista. Els especialistes poden entrar en diverses classes.</div>
+        <div class="info-item"><strong>Accés limitat</strong><br/>Els tutors només entren en la seua classe. Els especialistes només poden editar la seua especialitat a les classes assignades.</div>
+      </div>
+    </section>
+
+    <section class="auth-card stack">
+      <div class="section-title">Entrar en una classe</div>
+      <div class="row">
+        <div class="c12">
+          <label for="loginTeacherSelect">Mestre</label>
+          <select id="loginTeacherSelect">
+            <option value="">-- Selecciona un mestre --</option>
+          </select>
+        </div>
+        <div class="c12">
+          <label for="loginPassword">Contrasenya</label>
+          <input id="loginPassword" type="password" placeholder="Escriu la contrasenya"/>
+        </div>
+      </div>
+      <div class="auth-actions">
+        <button class="primary" id="loginTeacherBtn">Entrar</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Crear un mestre nou</div>
+      <div class="auth-grid">
+        <div>
+          <label for="registerTeacherName">Nom del mestre/a</label>
+          <input id="registerTeacherName" type="text" placeholder="Ex.: Marta Soler"/>
+        </div>
+        <div>
+          <label for="registerPassword">Contrasenya</label>
+          <input id="registerPassword" type="password" placeholder="Crea una contrasenya"/>
+        </div>
+      </div>
+      <div class="row" style="margin-top:2px;">
+        <div class="c6">
+          <label for="registerTeacherType">Tipus de mestre</label>
+          <select id="registerTeacherType">
+            <option value="tutor">Tutor/a</option>
+            <option value="specialist">Especialista</option>
+          </select>
+        </div>
+        <div class="c6 hidden" id="registerSpecialtyWrap">
+          <label for="registerSpecialty">Especialitat</label>
+          <select id="registerSpecialty"></select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:2px;">
+        <div class="c6" id="registerClassModeWrap">
+          <label for="registerClassMode">Classe associada</label>
+          <select id="registerClassMode">
+            <option value="existing">Triar classe existent</option>
+            <option value="new">Crear classe nova</option>
+          </select>
+        </div>
+        <div class="c6" id="registerExistingClassWrap">
+          <label for="registerExistingClass">Classe existent</label>
+          <select id="registerExistingClass"></select>
+        </div>
+        <div class="c6 hidden" id="registerNewClassWrap">
+          <label for="registerNewClass">Nova classe</label>
+          <input id="registerNewClass" type="text" placeholder="Ex.: 2PRI-B"/>
+        </div>
+      </div>
+      <div class="specialist-box hidden" id="registerSpecialistClassesWrap">
+        <label>Classes on entra l'especialista</label>
+        <div class="small">Marca una o diverses classes.</div>
+        <div class="specialist-classes" id="registerSpecialistClasses"></div>
+      </div>
+      <div class="auth-actions">
+        <button class="secondary" id="createTeacherBtn">Crear mestre i entrar</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Eliminar mestre</div>
+      <div class="row">
+        <div class="c12">
+          <label for="deleteTeacherSelect">Selecciona mestre</label>
+          <select id="deleteTeacherSelect">
+            <option value="">-- Selecciona un mestre --</option>
+          </select>
+        </div>
+      </div>
+      <div class="auth-actions">
+        <button class="danger" id="deleteTeacherBtn">Eliminar mestre</button>
+      </div>
+
+      <p class="small" id="authMessage">Carregant mestres...</p>
+    </section>
+  </div>
+</div>
+
+<div class="app hidden-before-login" id="appShell">
+<aside class="sidebar">
+<input id="teacherName" type="hidden" value=""/>
+<input id="teacherId" type="hidden" value=""/>
+<select hidden="" id="teacherRole"><option selected="" value="Tutor/a">Tutor/a</option></select>
+<div class="panel stack">
+<div class="section-title">Classes</div>
+<div class="toolbar">
+<select id="classSelect" style="flex:1;min-width:160px;" disabled></select>
+<button class="secondary hidden" id="newClassBtn">Nova classe</button>
+</div>
+<div class="small" id="teacherOnlyClassNote">Aquest mestre només pot accedir a la seua classe assignada.</div>
+<div class="class-grid" id="classList"></div>
+</div>
+<div class="panel stack" style="min-height:280px;">
+<div class="toolbar" style="justify-content:space-between;">
+<div class="section-title" style="margin-bottom:0;">Alumnes</div>
+<button class="primary" id="newStudentBtn">+ Alumne</button>
+</div>
+<input id="studentSearch" placeholder="Buscar alumne..." type="text"/>
+<div class="student-list" id="studentList"></div>
+</div>
+<div class="panel soft stack">
+<button class="success full" id="saveSide">Guardar</button>
+<button class="secondary full" id="copySide">Copiar informe final</button>
+<button class="ghost full" id="blankSide">Nou formulari net</button>
+</div>
+</aside>
+<main class="main">
+<div class="hero">
+<div>
+<h1>GENERADOR D'INFORMES PER ITACA</h1>
+<p class="muted" style="max-width:780px;margin:8px 0 0;">
+            Cada mestre entra amb la seua contrasenya i només pot treballar dins de la classe que té assignada. Tot es guarda online.
+          </p>
+</div>
+<div class="hero-card">
+<div class="status" id="statusBox">Preparat</div>
+<div class="divider"></div>
+<div class="stack">
+<div class="chip">Classe actual: <span id="currentClass">—</span></div>
+<div class="chip">Alumne actual: <span id="currentStudent">—</span></div>
+</div>
+</div>
+<div class="specialist-note-banner" id="specialistEditBanner"></div>
+</div>
+<div class="panel" id="generalPanel" style="margin-bottom:16px;">
+<div class="sticky-tools">
+<span class="teacher-badge" id="loggedTeacherBadge">Mestre: —</span>
+<button class="ghost logout-btn" id="logoutBtn">Canviar de mestre</button>
+<button class="primary" id="saveTop">Guardar</button>
+<button class="secondary" id="previewTop">Generar vista prèvia</button>
+<button class="secondary" id="copyTop">Copiar informe final</button>
+<button class="danger" id="deleteStudentBtn">Eliminar alumne</button>
+<span class="tag" id="lastSavedTag">Sense guardar encara</span>
+</div>
+</div>
+<div class="panel" style="margin-bottom:16px;">
+<div class="section-title">Dades generals</div>
+<div class="row">
+<div class="c4">
+<label for="alumne">Nom de l'alumne/a</label>
+<input id="alumne" placeholder="Ex.: Maria Pérez" type="text"/>
+</div>
+<div class="c2">
+<label for="genere">Forma</label>
+<select id="genere">
+<option value="alumne">L'alumne</option>
+<option value="alumna">L'alumna</option>
+</select>
+</div>
+<div class="c2">
+<label for="curs">Curs</label>
+<select id="curs">
+<option>primer</option>
+<option>segon</option>
+<option>tercer</option>
+<option>quart</option>
+<option>cinqué</option>
+<option>sisé</option>
+</select>
+</div>
+<div class="c4">
+<label for="specialistNotes">Observació general opcional</label>
+<input id="specialistNotes" placeholder="Ex.: actualitzat per l'especialista de música" type="text"/>
+</div>
+</div>
+</div>
+<div class="panel" style="margin-bottom:16px;">
+<div class="section-title">Àrees</div>
+<div id="subjectsContainer"></div>
+</div>
+<div class="panel" id="personalPanel" style="margin-bottom:16px;">
+<div class="section-title">Aspectes personals i evolutius</div>
+<div class="row">
+<div class="c4">
+<label for="apren">Aprén amb més facilitat</label>
+<select id="apren">
+<option value="">-- Selecciona --</option>
+<option value="en gran grup">en gran grup</option>
+<option value="en xicotet grup">en xicotet grup</option>
+<option value="amb activitats cooperatives">amb activitats cooperatives</option>
+<option value="amb suport individual">amb suport individual</option>
+<option value="amb materials visuals">amb materials visuals</option>
+<option value="amb materials manipulatius">amb materials manipulatius</option>
+</select>
+</div>
+<div class="c4">
+<label for="ritme">Ritme d'aprenentatge</label>
+<select id="ritme">
+<option value="ràpid">ràpid</option>
+<option value="adequat">adequat</option>
+<option value="amb dificultats">amb dificultats</option>
+</select>
+</div>
+<div class="c4">
+<label for="autonomia">Autonomia</label>
+<select id="autonomia">
+<option value="és capaç de treballar amb autonomia">és capaç de treballar amb autonomia</option>
+<option value="només necessita atenció constant">només necessita atenció constant</option>
+<option value="inicia la tasca però necessita supervisió per a la seua finalització">inicia la tasca però necessita supervisió</option>
+</select>
+</div>
+<div class="c4">
+<label for="destaca">Tasques en les quals destaca</label>
+<select id="destaca">
+<option value="">-- Selecciona --</option>
+<option value="verbals">verbals</option>
+<option value="gràfiques">gràfiques</option>
+<option value="motrius">motrius</option>
+<option value="manipulatives">manipulatives</option>
+<option value="lògic-matemàtiques">lògic-matemàtiques</option>
+<option value="musicals">musicals</option>
+<option value="artístiques">artístiques</option>
+</select>
+</div>
+<div class="c4">
+<label for="habits">Hàbits de treball</label>
+<select id="habits">
+<option value="">-- Selecciona --</option>
+<option value="manté l'atenció i mostra interés">manté l'atenció i mostra interés</option>
+<option value="participa activament en les activitats">participa activament en les activitats</option>
+<option value="realitza les tasques amb constància">realitza les tasques amb constància</option>
+<option value="es distrau amb facilitat">es distrau amb facilitat</option>
+<option value="necessita ajuda freqüent per mantindre l'atenció">necessita ajuda freqüent per mantindre l'atenció</option>
+</select>
+</div>
+<div class="c4">
+<label for="actitud">Actitud davant dels problemes i activitats</label>
+<select id="actitud">
+<option value="">-- Selecciona --</option>
+<option value="reflexiona abans de prendre decisions">reflexiona abans de prendre decisions</option>
+<option value="és participatiu/va i mostra interés">és participatiu/va i mostra interés</option>
+<option value="s'esforça davant les dificultats">s'esforça davant les dificultats</option>
+<option value="mostra inseguretat davant les tasques noves">mostra inseguretat davant les tasques noves</option>
+<option value="necessita motivació externa per iniciar o mantindre la tasca">necessita motivació externa per iniciar o mantindre la tasca</option>
+</select>
+</div>
+<div class="c6">
+<label for="social">Aspecte afectiu i social</label>
+<select id="social">
+<option value="">-- Selecciona --</option>
+<option value="és alegre i manté bona relació amb el grup">és alegre i manté bona relació amb el grup</option>
+<option value="és respectuós/a i col·laboratiu/va">és respectuós/a i col·laboratiu/va</option>
+<option value="és tímid/a però s'integra progressivament">és tímid/a però s'integra progressivament</option>
+<option value="necessita ajuda per regular les seues emocions">necessita ajuda per regular les seues emocions</option>
+<option value="presenta dificultats en la relació amb iguals">presenta dificultats en la relació amb iguals</option>
+</select>
+</div>
+<div class="c6">
+<label for="assistencia">Assistència</label>
+<select id="assistencia">
+<option value="normal">normal</option>
+<option value="irregular">irregular</option>
+<option value="amb retards freqüents">amb retards freqüents</option>
+<option value="absentista">absentista</option>
+</select>
+</div>
+<div class="c12">
+<label for="obs_personals">Observacions lliures d'aspectes personals</label>
+<textarea id="obs_personals" placeholder="Opcional"></textarea>
+</div>
+</div>
+</div>
+<div class="panel" id="supportsPanel" style="margin-bottom:16px;">
+<div class="section-title">Mesures i suports d'atenció educativa</div>
+<div class="row">
+<div class="c4">
+<label for="suports">Suports personals</label>
+<select id="suports">
+<option value="">-- Selecciona --</option>
+<option value="P.T.">P.T.</option>
+<option value="A.L.">A.L.</option>
+<option value="educador/a">educador/a</option>
+<option value="P.T. i A.L.">P.T. i A.L.</option>
+<option value="sense suport personal específic">sense suport personal específic</option>
+</select>
+</div>
+<div class="c4">
+<label for="reforc">Aspectes que es reforcen</label>
+<select id="reforc">
+<option value="">-- Selecciona --</option>
+<option value="autonomia personal">autonomia personal</option>
+<option value="habilitats socials">habilitats socials</option>
+<option value="comprensió lectora">comprensió lectora</option>
+<option value="expressió escrita">expressió escrita</option>
+<option value="raonament matemàtic">raonament matemàtic</option>
+<option value="atenció i concentració">atenció i concentració</option>
+</select>
+</div>
+<div class="c4">
+<label for="materials">Materials i recursos</label>
+<select id="materials">
+<option value="">-- Selecciona --</option>
+<option value="pictogrames">pictogrames</option>
+<option value="tauleta">tauleta</option>
+<option value="materials visuals">materials visuals</option>
+<option value="materials manipulatius">materials manipulatius</option>
+<option value="quadern adaptat">quadern adaptat</option>
+<option value="sense materials específics">sense materials específics</option>
+</select>
+</div>
+<div class="c6">
+<label for="metodologia">Mesures metodològiques</label>
+<select id="metodologia">
+<option value="">-- Selecciona --</option>
+<option value="disposa de major temps en les tasques">disposa de major temps en les tasques</option>
+<option value="rep explicacions individualitzades">rep explicacions individualitzades</option>
+<option value="realitza activitats ajustades al seu nivell">realitza activitats ajustades al seu nivell</option>
+<option value="treballa amb suport visual i seqüenciació">treballa amb suport visual i seqüenciació</option>
+<option value="combina activitats manipulatives i guiades">combina activitats manipulatives i guiades</option>
+</select>
+</div>
+<div class="c6">
+<label for="avaluacio">Mesures en l'avaluació</label>
+<select id="avaluacio">
+<option value="">-- Selecciona --</option>
+<option value="disposa de més temps en els exàmens">disposa de més temps en els exàmens</option>
+<option value="rep explicació individualitzada de les tasques">rep explicació individualitzada de les tasques</option>
+<option value="utilitza suports visuals">utilitza suports visuals</option>
+<option value="realitza proves adaptades al seu nivell">realitza proves adaptades al seu nivell</option>
+<option value="l'avaluació es basa principalment en l'observació directa">l'avaluació es basa principalment en l'observació directa</option>
+</select>
+</div>
+<div class="c12">
+<label for="obs_suports">Observacions lliures de mesures i suports</label>
+<textarea id="obs_suports" placeholder="Opcional"></textarea>
+</div>
+</div>
+</div>
+<div class="panel">
+<div class="section-title">Vista prèvia i text per copiar</div>
+<div class="toolbar" style="margin-bottom:12px;">
+<button class="secondary" id="previewBottom">Actualitzar vista prèvia</button>
+<button class="primary" id="copyBottom">Copiar informe final</button>
+</div>
+<textarea class="preview" id="output" placeholder="Ací apareixerà el text complet per a pegar al sistema oficial..."></textarea>
+</div>
+</main>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
+    import {
+      getFirestore, doc, setDoc, getDoc, deleteDoc,
+      collection, onSnapshot, query, orderBy, serverTimestamp, getDocs
+    } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD5EAMg-0p54f8bPq8SVdZ_ePg5Xso3cmg",
+      authDomain: "arm1-acbba.firebaseapp.com",
+      projectId: "arm1-acbba",
+      storageBucket: "arm1-acbba.firebasestorage.app",
+      messagingSenderId: "408825932019",
+      appId: "1:408825932019:web:10f2079b590b4c9ca3af86",
+      measurementId: "G-S78TM6PVRL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
+    const db = getFirestore(app);
+
+    const defaultClasses = [
+      "1PRI-A", "2PRI-A", "3PRI-A", "4PRI-A", "4PRI-B", "5PRI-A", "5PRI-B", "6PRI-A", "6PRI-B"
+    ];
+
+
+    const seededStudents = {
+      "1PRI-A": [
+            "MOHAMED El Hirache",
+            "JOSÉ González Fernández",
+            "FABIÁN GAEL Inojosa Torres",
+            "SHARON López Carrasco",
+            "JULIÁN AMIR Sbaiti García*",
+            "VALENTINA Silva Moran",
+            "INGRID Soares de Souza",
+            "JUAN RAMÓN Torres Pajarón",
+            "ELLA Vázquez Romero"
+      ],
+      "2PRI-A": [
+            "ABEL Albentosa González",
+            "MILEIA Ananevich",
+            "SAMUEL De Oliveira Kerr",
+            "JOSÉ Flores Heredia",
+            "MARTINA García Cortés",
+            "ÁFRICA García García",
+            "DYLAN González García",
+            "SARAY González Lara",
+            "LOLA Heredia Mendoza",
+            "ABDELLAH Laksikis",
+            "SAMANTA López Carbonell",
+            "LARA Orive García",
+            "PATRICK SNEIJDER Pavón Banegas",
+            "AITANA Pedrós Moreno",
+            "NATALIA Pozuelo García",
+            "INDIA Torres Vargas"
+      ],
+      "3PRI-A": [
+            "AYA Ali Pacha",
+            "LUCÍA Cabrera Lara",
+            "MARIAN Flores Martínez",
+            "PEDRO González Forment",
+            "SIRU Lin",
+            "IZAN López García",
+            "AMIRA Mascarós Urban",
+            "ISAÍAS Mateo Miralles",
+            "NAYMA Mendoza López",
+            "ANTONIO JOSÉ Mendoza González",
+            "AMNA MURTAZA Mughal",
+            "GABRIEL NETTI Oltean",
+            "SAMUEL Ortíz Martínez",
+            "RAFA Stenberg Caballero",
+            "ÁNGEL Torres Pajarón",
+            "JORGE Triviño González"
+      ],
+      "4PRI-A": [
+            "SCARLETT Betamen López",
+            "ELIÁN El Aasri Heredia",
+            "SARAYMA Espinosa Torres",
+            "ADAY Gomera Martínez",
+            "MELODIA González Torres",
+            "ABRAHAM Heredia Mendoza",
+            "NAZARET Mateo Miralles*",
+            "YUMARA Torres Vargas",
+            "AINHOA Umpierrez Arrico"
+      ],
+      "4PRI-B": [
+            "VICTORIA Casamayor Sánchez",
+            "JIA YU Chen",
+            "ADRIANA de la Cruz Gómez",
+            "MARWA El Hirache*",
+            "LOUAY El Sayyid*",
+            "EDUAR ISAAC Garay",
+            "JOSUÉ Heredia Barea",
+            "DAVID López Carasco",
+            "DARAYMA Mendoza González",
+            "SIRIN Tahar Djebbar*"
+      ],
+      "5PRI-A": [
+            "VALERIA Alarcón Notario",
+            "JOEL Cabello Miralles",
+            "AMPARO Espinosa Torres",
+            "FERNANDO Forment Forment",
+            "EMILIO González Campos",
+            "FEDERICO González Forment",
+            "VALERIA Juncos Moliner",
+            "CARLA Marín Ortíz",
+            "DENISS Martínez Vera",
+            "DANIEL Matoque Quintanilla",
+            "LUCÍA Matoque Quintanilla",
+            "AROA Morcillo Gómez",
+            "CARLA Ortíz Martínez",
+            "JUAN MARTÍN Roa Sánchez",
+            "DANIEL Rochina Carrión",
+            "LUIS MIGUEL Rodríguez Casamayor",
+            "VERA AMPARO Tomera Rodríguez",
+            "RAMÓN Torres Vargas"
+      ],
+      "5PRI-B": [
+            "MIRANDA Álvarez Arcusa",
+            "ILYASSE Bougurine",
+            "SAMI Bougurine",
+            "ESTHER de Oliveira Kerr",
+            "LINE LOUAYNA El Sayyid",
+            "ISAAC JESÚS Garrido Herrera",
+            "MIREIA Jara Sandoval",
+            "MARTINA Juanes Martínez",
+            "SALMA López Carbonell",
+            "YERAI Rodríguez Berlanga",
+            "ANDRÉS Romero Agea",
+            "TRIANA Romero Lara",
+            "SUSEJ NICOLE Salas Celis",
+            "COSTANZA Salaya López",
+            "LEO Salvador del Fresno",
+            "DANIEL Sánchez Gómez",
+            "ÁLVARO Sánchez Herráiz",
+            "ALEJANDRA Sancho Torrubia",
+            "LEYRE Santacruz Vozmediano",
+            "AINARA Serrano Serrano"
+      ],
+      "6PRI-A": [
+            "MAROLING Agüero Ruiz",
+            "VALERIA Barón Bazaga",
+            "WILKER JUNIOR de Souza",
+            "MIGUEL Forment Forment",
+            "JUNIOR FRANCISCO Garay Cruz",
+            "EDUARDO González García",
+            "ANDREA GABRIELA Hernández Salero",
+            "NEREA Ibor Evayeliuo",
+            "TIMUR Isaev",
+            "HENRY MACKLEIN Jaimes Ortiz",
+            "BHAVANJOT Kaur",
+            "VIOLETA Lescano Roldán",
+            "ISAAC Liu",
+            "WILLIAM Martín Luzón",
+            "RODRIGO Morantes Rodríguez",
+            "YUME Saegusa Martínez",
+            "THALIANA Tafur",
+            "JOHANA Tarancón Canelones",
+            "TOÑI Torres Vargas"
+      ],
+      "6PRI-B": [
+            "EMA SOPHIA Bravo Villarroel",
+            "SIOMARA Cabello Miralles",
+            "ALEX Cano Vélez",
+            "ADRIANA Cuyas Roldán",
+            "PILAR El Aasri Heredia",
+            "JONATHAN Espinoza",
+            "EDURNE García Cortés",
+            "ARIADNE García García",
+            "LUCIA Gómez García-Consuegra",
+            "JONATHAN Gordillo Navarro",
+            "SALAH EDDINE Laksikis",
+            "SIYAO Lin",
+            "MAICOL López Carrasco",
+            "LUIS FERNANDO Martínez",
+            "ÁLEX Moreno Rodríguez",
+            "ANNA Moroz",
+            "YORDY YOANH Pavón Banegas",
+            "ARTEMY Prokopenko",
+            "SEBASTIAN Ruiz Madramañ"
+      ]
+};
+
+    function courseFromClassName(className){
+      if (className.startsWith("1PRI")) return "primer";
+      if (className.startsWith("2PRI")) return "segon";
+      if (className.startsWith("3PRI")) return "tercer";
+      if (className.startsWith("4PRI")) return "quart";
+      if (className.startsWith("5PRI")) return "cinqué";
+      if (className.startsWith("6PRI")) return "sisé";
+      return "primer";
+    }
+
+    async function seedInitialData(){
+      let classesChanged = false;
+      for (const className of Object.keys(seededStudents)){
+        if (!state.classes.includes(className)){
+          state.classes.push(className);
+          classesChanged = true;
+        }
+      }
+      if (classesChanged){
+        state.classes.sort((a,b)=>a.localeCompare(b,"ca"));
+        await saveClasses();
+      }
+      for (const [className, studentNames] of Object.entries(seededStudents)){
+        for (const studentName of studentNames){
+          const id = `seed-${slugify(studentName)}`;
+          const ref = studentDoc(className, id);
+          const snap = await getDoc(ref);
+          if (!snap.exists()){
+            await setDoc(ref, {
+              className,
+              studentName,
+              studentNameLower: studentName.toLowerCase(),
+              course: courseFromClassName(className),
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              lastEditor: "Importació inicial (Sistema)",
+              data: {
+                general: {
+                  alumne: studentName,
+                  genere: "alumne",
+                  curs: courseFromClassName(className),
+                  specialistNotes: ""
+                },
+                personal: {},
+                supports: {},
+                subjects: {}
+              }
+            });
+          }
+        }
+      }
+    }
+
+    const subjects = [
+      { key:'castellana', name:'Lengua Castellana y Literatura', competencies:[
+        'C.E.1- Multilingüisme i interculturalitat.',
+        'C.E.2- Comprensió oral i multimodal.',
+        'C.E.3- Comprensió escrita i multimodal.',
+        'C.E.4- Expressió oral i multimodal.',
+        'C.E.5- Expressió escrita i multimodal.',
+        'C.E.6- Interacció oral, escrita i multimodal.',
+        'C.E.7- Mediació oral, escrita i multimodal.',
+        'C.E.8- Lectura autònoma.',
+        'C.E.9- Competència literària.'
+      ]},
+      { key:'mates', name:'Matemàtiques', competencies:[
+        'C.E.1: Resolució de problemes.',
+        'C.E.2: Raonament matemàtic i connexions.',
+        'C.E.3: Modelització. Models matemàtics senzills. Aplicar les matemàtiques.',
+        'C.E.4: Pensament computacional. Aplicar algoritmes senzills.',
+        'C.E.5: Representacions.',
+        'C.E.6: Comunicació dels resultats.',
+        'C.E.7: Rellevància social i cultural.',
+        'C.E.8: Autoregulació i control d’emocions.'
+      ]},
+      { key:'valencia', name:'Valencià: Llengua i Literatura', competencies:[
+        'C.E.1- Multilingüisme i interculturalitat.',
+        'C.E.2- Comprensió oral i multimodal.',
+        'C.E.3- Comprensió escrita i multimodal.',
+        'C.E.4- Expressió oral i multimodal.',
+        'C.E.5- Expressió escrita i multimodal.',
+        'C.E.6- Interacció oral, escrita i multimodal.',
+        'C.E.7- Mediació oral, escrita i multimodal.',
+        'C.E.8- Lectura autònoma.',
+        'C.E.9- Competència literària.'
+      ]},
+      { key:'medi', name:'Coneixement del medi', competencies:[
+        'C.E.1: Dispositius i recursos digitals.',
+        'C.E.2: Projectes cooperatius i investigacions.',
+        'C.E.3: Raonament científic i experimentació.',
+        'C.E.4: El coneixement del propi cos: hàbits saludables.',
+        'C.E.5: Paisatge i ecosistema (animals i plantes): l’acció humana en l’entorn.',
+        'C.E.6: Mesura del temps: esdeveniments dels grans períodes històrics.',
+        'C.E.7: Organització i estructura política i territorial: municipal, CV, Espanya i Europa.',
+        'C.E.8: Patrimoni natural, històric i cultural de la CV i Espanya.'
+      ]},
+      { key:'angles', name:'Llengua Estrangera: Anglés', competencies:[
+        'C.E.1: Multilingüisme i interculturalitat.',
+        'C.E.2: Comprensió oral.',
+        'C.E.3: Comprensió escrita.',
+        'C.E.4: Expressió oral.',
+        'C.E.5: Expressió escrita.',
+        'C.E.6: Interacció oral i escrita.',
+        'C.E.7: Mediació oral i escrita.'
+      ]},
+      { key:'ef', name:'Educació Física', competencies:[
+        'C.E.1: Hàbits saludables i estil de vida activa.',
+        'C.E.2: Consciència, percepció i control de la corporalitat. Emocions.',
+        'C.E.3: Habilitats i capacitats físiques.',
+        'C.E.4: Continguts artístics i expressius.',
+        'C.E.5: Activitats físiques en l’entorn.',
+        'C.E.6: Utilització responsable i segura dels recursos tecnològics.'
+      ]},
+      { key:'plastica', name:'Educación Plástica y Visual', competencies:[
+        'C.E.1: Apreciació del patrimoni i de la cultura visual i audiovisual.',
+        'C.E.2: Reconéixer i valorar la contemporaneïtat artística.',
+        'C.E.3: Emprar la terminologia específica: ús correcte del llenguatge plàstic.',
+        'C.E.4: Experimentació i utilització d’elements bàsics.',
+        'C.E.5: Aplicació dels recursos digitals en la cerca d’informació i creació.',
+        'C.E.6: Creació de produccions visuals i audiovisuals.'
+      ]},
+      { key:'musica', name:'Música i Dansa', competencies:[
+        'C.E.1: Obres musicals i elements musicals.',
+        'C.E.2: Exploració i anàlisi dels elements del so: anàlisi auditiva i musical.',
+        'C.E.3: Interpretació de jocs, propostes musicals i escèniques.',
+        'C.E.4: Creació de propostes musicals i escèniques o projectes multidisciplinars.',
+        'C.E.5: Aplicació dels recursos digitals i audiovisuals a la música i dansa.'
+      ]},
+      { key:'pi', name:'Projectes Interdisciplinars', competencies:[] },
+      { key:'religio', name:'Religió o Atenció Educativa', competencies:[] },
+      { key:'al', name:'Audició i Llenguatge', competencies:[] },
+      { key:'pt', name:'Pedagogia Terapèutica', competencies:[] },
+      { key:'valors', name:'Educació en Valors Ètics i Cívics (només 5é)', competencies:[
+        'C.E.1- Diàlegs i debats. Acords i consens.',
+        'C.E.2- Reconeixement i control de les emocions.',
+        'C.E.3- Normes de convivència i drets de la infantesa.',
+        'C.E.4- Estereotips: relacions interpersonals igualitàries.',
+        'C.E.5- Valors democràtics: ciutadania participativa i responsable.',
+        'C.E.6- Situacions de desigualtat i injustícia social.',
+        'C.E.7- Desafiaments ecològics: ODS.'
+      ]}
+    ];
+
+    const specialistOptions = [
+      { key:'ef', label:'Educació Física' },
+      { key:'angles', label:'Anglés' },
+      { key:'musica', label:'Música' },
+      { key:'plastica', label:'Plàstica (Arts)' },
+      { key:'religio', label:'Religió' },
+      { key:'al', label:'Audició i Llenguatge' },
+      { key:'pt', label:'Pedagogia Terapèutica' }
+    ];
+
+    const specialistLabels = Object.fromEntries(specialistOptions.map(item => [item.key, item.label]));
+
+    function isSpecialistTeacher(teacher){
+      return !!teacher && teacher.teacherType === 'specialist' && !!teacher.specialty;
+    }
+
+    function getTeacherAllowedClasses(teacher){
+      if(!teacher) return [];
+      if(isSpecialistTeacher(teacher)) return Array.isArray(teacher.classNames) ? teacher.classNames : [];
+      return teacher.className ? [teacher.className] : [];
+    }
+
+    function getSpecialistSubjectKey(){
+      return isSpecialistTeacher(state.teacher) ? state.teacher.specialty : null;
+    }
+
+    const $ = id => document.getElementById(id);
+
+    const state = {
+      classes:[...defaultClasses],
+      currentClass:"",
+      currentStudentId:null,
+      students:[],
+      unsub:null,
+      unsubTeachers:null,
+      teachers:[],
+      teacher:null,
+      currentStudentData:null
+    };
+
+    function slugify(text=""){
+      return text.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .replace(/[^a-zA-Z0-9]+/g,"-")
+        .replace(/^-+|-+$/g,"")
+        .toLowerCase();
+    }
+
+    function escapeHtml(s=""){
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+    }
+
+    async function sha256(text=""){
+      const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+      return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    function teacherDoc(teacherId){ return doc(db, "teachers", teacherId); }
+    function normalizeTeacherId(name=""){ return slugify(name); }
+
+    function renderTeachers(){
+      const loginSelect = $("loginTeacherSelect");
+      const registerSelect = $("registerExistingClass");
+      const deleteSelect = $("deleteTeacherSelect");
+      const teachersSorted = [...state.teachers].sort((a,b)=>(a.displayName||"").localeCompare((b.displayName||""),"ca"));
+      if (loginSelect){
+        loginSelect.innerHTML = '<option value="">-- Selecciona un mestre --</option>' +
+          teachersSorted.map(t => {
+            const extra = isSpecialistTeacher(t)
+              ? `${specialistLabels[t.specialty] || t.specialty} · ${(Array.isArray(t.classNames) ? t.classNames.join(", ") : "")}`
+              : (t.className || "");
+            return `<option value="${escapeHtml(t.id)}">${escapeHtml(t.displayName)} · ${escapeHtml(extra)}</option>`;
+          }).join("");
+      }
+      if (registerSelect){
+        registerSelect.innerHTML = state.classes.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+      }
+      if (deleteSelect){
+        deleteSelect.innerHTML = '<option value="">-- Selecciona un mestre --</option>' +
+          teachersSorted.map(t => {
+            const extra = isSpecialistTeacher(t)
+              ? `${specialistLabels[t.specialty] || t.specialty} · ${(Array.isArray(t.classNames) ? t.classNames.join(", ") : "")}`
+              : (t.className || "");
+            return `<option value="${escapeHtml(t.id)}">${escapeHtml(t.displayName)} · ${escapeHtml(extra)}</option>`;
+          }).join("");
+      }
+      renderSpecialistClassOptions();
+      renderSpecialtyOptions();
+    }
+
+    function updateRegisterClassMode(){
+      const mode = valueOf("registerClassMode");
+      $("registerExistingClassWrap").classList.toggle("hidden", mode !== "existing");
+      $("registerNewClassWrap").classList.toggle("hidden", mode !== "new");
+    }
+
+    function renderSpecialtyOptions(){
+      const select = $("registerSpecialty");
+      if(!select) return;
+      const current = select.value;
+      select.innerHTML = '<option value="">-- Selecciona especialitat --</option>' +
+        specialistOptions.map(item => `<option value="${item.key}">${item.label}</option>`).join("");
+      select.value = current;
+    }
+
+    function renderSpecialistClassOptions(){
+      const wrap = $("registerSpecialistClasses");
+      if(!wrap) return;
+      wrap.innerHTML = state.classes.map(className => `
+        <label class="check">
+          <input type="checkbox" data-specialist-class="${escapeHtml(className)}" value="${escapeHtml(className)}">
+          <span>${escapeHtml(className)}</span>
+        </label>
+      `).join("");
+    }
+
+    function getSelectedSpecialistClasses(){
+      return [...document.querySelectorAll('[data-specialist-class]:checked')].map(el => el.value);
+    }
+
+    function updateRegisterTeacherType(){
+      const isSpecialist = valueOf("registerTeacherType") === "specialist";
+      $("registerSpecialtyWrap").classList.toggle("hidden", !isSpecialist);
+      $("registerSpecialistClassesWrap").classList.toggle("hidden", !isSpecialist);
+      $("registerClassModeWrap").classList.toggle("hidden", isSpecialist);
+      $("registerExistingClassWrap").classList.toggle("hidden", isSpecialist || valueOf("registerClassMode") !== "existing");
+      $("registerNewClassWrap").classList.toggle("hidden", isSpecialist || valueOf("registerClassMode") !== "new");
+    }
+
+    function subscribeTeachers(){
+      if(state.unsubTeachers) state.unsubTeachers();
+      state.unsubTeachers = onSnapshot(query(collection(db, "teachers"), orderBy("displayName")), snap => {
+        state.teachers = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        renderTeachers();
+      }, err => {
+        console.error(err);
+        state.teachers = [];
+        renderTeachers();
+      });
+    }
+
+    function applyTeacherSession(teacher){
+      state.teacher = teacher;
+      const allowedClasses = getTeacherAllowedClasses(teacher);
+      state.currentClass = allowedClasses[0] || teacher.className || "";
+      state.currentStudentId = null;
+      state.currentStudentData = null;
+      setValue("teacherName", teacher.displayName || "");
+      setValue("teacherId", teacher.id || "");
+      const badgeText = isSpecialistTeacher(teacher)
+        ? `Mestre: ${teacher.displayName || "—"} · ${specialistLabels[teacher.specialty] || teacher.specialty} · ${(allowedClasses.join(', ') || '—')}`
+        : `Mestre: ${teacher.displayName || "—"} · ${teacher.className || "—"}`;
+      $("loggedTeacherBadge").textContent = badgeText;
+      $("teacherOnlyClassNote").style.display = "block";
+      $("teacherOnlyClassNote").textContent = isSpecialistTeacher(teacher)
+        ? `Aquest especialista només pot editar ${specialistLabels[teacher.specialty] || teacher.specialty} a les classes assignades.`
+        : "Aquest mestre només pot accedir a la seua classe assignada.";
+      $("authScreen").classList.add("hidden");
+      $("appShell").classList.remove("hidden-before-login");
+      $("loginPassword").value = "";
+      renderClassUI();
+      clearForm();
+      applyEditingPermissions();
+      subscribeStudents();
+      setStatus(`Sessió iniciada com a ${teacher.displayName}`);
+    }
+
+    function logoutTeacher(){
+      state.teacher = null;
+      state.currentStudentId = null;
+      if(state.unsub){
+        state.unsub();
+        state.unsub = null;
+      }
+      state.students = [];
+      state.currentStudentData = null;
+      setValue("teacherName", "");
+      setValue("teacherId", "");
+      $("studentList").innerHTML = "";
+      $("classList").innerHTML = "";
+      $("authScreen").classList.remove("hidden");
+      $("appShell").classList.add("hidden-before-login");
+      $("loginTeacherSelect").value = "";
+      $("loginPassword").value = "";
+      $("currentClass").textContent = "—";
+      $("currentStudent").textContent = "—";
+      $("loggedTeacherBadge").textContent = "Mestre: —";
+      $("teacherOnlyClassNote").style.display = "none";
+    }
+
+
+    async function loginTeacher(){
+      const teacherId = valueOf("loginTeacherSelect");
+      const password = valueOf("loginPassword");
+      if(!teacherId){
+        alert("Selecciona un mestre.");
+        return;
+      }
+      if(!password){
+        alert("Escriu la contrasenya.");
+        return;
+      }
+      const snap = await getDoc(teacherDoc(teacherId));
+      if(!snap.exists()){
+        alert("Aquest mestre no existeix.");
+        return;
+      }
+      const teacher = { id:snap.id, ...snap.data() };
+      const passwordHash = await sha256(password);
+      if(passwordHash !== teacher.passwordHash){
+        alert("Contrasenya incorrecta.");
+        return;
+      }
+      $("loginPassword").value = "";
+      applyTeacherSession(teacher);
+    }
+
+    async function createTeacherAccount(){
+      const displayName = valueOf("registerTeacherName").trim();
+      const password = valueOf("registerPassword");
+      const teacherType = valueOf("registerTeacherType") || 'tutor';
+      const isSpecialist = teacherType === 'specialist';
+      const mode = valueOf("registerClassMode");
+      const selectedClass = mode === "existing" ? valueOf("registerExistingClass").trim() : valueOf("registerNewClass").trim().toUpperCase();
+      const specialty = valueOf("registerSpecialty");
+      let selectedClasses = isSpecialist ? getSelectedSpecialistClasses() : [];
+      if(!displayName){
+        alert("Has d'escriure el nom del mestre/a.");
+        return;
+      }
+      if(!password || password.length < 4){
+        alert("La contrasenya ha de tindre almenys 4 caràcters.");
+        return;
+      }
+      if(isSpecialist){
+        if(!specialty){
+          alert("Has de seleccionar una especialitat.");
+          return;
+        }
+        if(!selectedClasses.length){
+          alert("Marca almenys una classe per a l'especialista.");
+          return;
+        }
+      }else if(!selectedClass){
+        alert("Has d'indicar una classe.");
+        return;
+      }
+      const id = normalizeTeacherId(displayName);
+      const existing = await getDoc(teacherDoc(id));
+      if(existing.exists()){
+        alert("Ja existeix un mestre amb aquest nom. Canvia'l lleugerament.");
+        return;
+      }
+
+      if(!isSpecialist){
+        const className = selectedClass.toUpperCase();
+        if(!state.classes.includes(className)){
+          state.classes.push(className);
+          state.classes.sort((a,b)=>a.localeCompare(b,"ca"));
+          await saveClasses();
+        }
+        selectedClasses = [className];
+      }
+
+      const teacher = {
+        displayName,
+        teacherType,
+        className: selectedClasses[0] || '',
+        classNames: selectedClasses,
+        specialty: isSpecialist ? specialty : '',
+        passwordHash: await sha256(password),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
+      await setDoc(teacherDoc(id), teacher, { merge:true });
+      $("registerTeacherName").value = "";
+      $("registerPassword").value = "";
+      $("registerNewClass").value = "";
+      $("registerSpecialty").value = "";
+      document.querySelectorAll('[data-specialist-class]').forEach(el => el.checked = false);
+      $("authMessage").textContent = `Mestre ${displayName} creat correctament.`;
+      applyTeacherSession({ id, ...teacher });
+    }
+
+
+    async function deleteTeacherAccount(){
+      const teacherId = valueOf("deleteTeacherSelect");
+      if(!teacherId){
+        alert("Selecciona un mestre.");
+        return;
+      }
+      if(state.teacher && state.teacher.id === teacherId){
+        alert("No pots eliminar el mestre amb la sessió iniciada.");
+        return;
+      }
+      const snap = await getDoc(teacherDoc(teacherId));
+      if(!snap.exists()){
+        alert("Aquest mestre no existeix.");
+        return;
+      }
+      const teacher = { id: snap.id, ...snap.data() };
+      const extra = isSpecialistTeacher(teacher)
+        ? `${specialistLabels[teacher.specialty] || teacher.specialty} · ${(Array.isArray(teacher.classNames) ? teacher.classNames.join(", ") : "")}`
+        : (teacher.className || "");
+      if(!confirm(`Vols eliminar el mestre ${teacher.displayName}${extra ? ` (${extra})` : ""}?`)) return;
+
+      await deleteDoc(teacherDoc(teacherId));
+      $("deleteTeacherSelect").value = "";
+      $("authMessage").textContent = `Mestre ${teacher.displayName} eliminat correctament.`;
+      setStatus(`Mestre ${teacher.displayName} eliminat`);
+    }
+
+    function classDoc(){ return doc(db, "config", "classes"); }
+    function studentsCol(className){ return collection(db, "classes", slugify(className), "students"); }
+    function studentDoc(className, studentId){ return doc(db, "classes", slugify(className), "students", studentId); }
+
+    function setStatus(text, error=false){
+      const el = $("statusBox");
+      el.textContent = text;
+      el.style.background = error ? "#fdecec" : "#eff5ff";
+      el.style.color = error ? "#b42318" : "#2450b8";
+    }
+
+    function valueOf(id){ const el=$(id); return el ? el.value : ""; }
+    function setValue(id,val){ const el=$(id); if(el) el.value = val; }
+
+    function buildSubjects(){
+      const container = $("subjectsContainer");
+      container.innerHTML = "";
+      subjects.forEach(subject => {
+        const div = document.createElement("div");
+        div.className = "subject-card";
+        div.dataset.subjectKey = subject.key;
+        div.innerHTML = `
+          <div class="subject-head">
+            <h3>${subject.name}</h3>
+            <span class="chip">${subject.key.toUpperCase()}</span>
+          </div>
+          <div class="row">
+            <div class="c4">
+              <label for="${subject.key}_nivell">Resultat global</label>
+              <select id="${subject.key}_nivell">
+                <option value="">-- Selecciona --</option>
+                <option value="EXCEL·LENT">EXCEL·LENT</option>
+                <option value="NOTABLE">NOTABLE</option>
+                <option value="SUFICIENT">SUFICIENT</option>
+                <option value="NO SUPERAT - HA DE TREBALLAR PER A ASSIMILAR ELS SABERS PROPOSATS">NO SUPERAT - HA DE TREBALLAR</option>
+                <option value="NO SUPERAT - MALGRAT L'ESFORÇ REALITZAT, HA DE TREBALLAR MÉS PER A ASSIMILAR ELS SABERS PROPOSATS">NO SUPERAT - HA DE TREBALLAR MÉS</option>
+              </select>
+            </div>
+            <div class="c8">
+              <label for="${subject.key}_obs">Observació lliure de l'àrea</label>
+              <input id="${subject.key}_obs" type="text" placeholder="Opcional" />
+            </div>
+            <div class="c6">
+              <label>Competències assolides</label>
+              <div class="checkbox-grid">
+                ${subject.competencies.map(c => `<label class="check"><input type="checkbox" data-group="${subject.key}_ok" value="${escapeHtml(c)}"><span>${c}</span></label>`).join("")}
+              </div>
+            </div>
+            <div class="c6">
+              <label>Competències a continuar treballant</label>
+              <div class="checkbox-grid">
+                ${subject.competencies.map(c => `<label class="check"><input type="checkbox" data-group="${subject.key}_ko" value="${escapeHtml(c)}"><span>${c}</span></label>`).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function getChecked(group){
+      return [...document.querySelectorAll(`input[data-group="${group}"]:checked`)].map(el => el.value);
+    }
+    function setChecked(group, values=[]){
+      document.querySelectorAll(`input[data-group="${group}"]`).forEach(el => el.checked = values.includes(el.value));
+    }
+
+    function renderClassUI(){
+      const allowedClasses = getTeacherAllowedClasses(state.teacher);
+      const className = state.currentClass || allowedClasses[0] || "";
+      $("classSelect").innerHTML = allowedClasses.length
+        ? allowedClasses.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("")
+        : "";
+      $("classSelect").disabled = allowedClasses.length <= 1;
+      $("classSelect").value = className;
+      $("classList").innerHTML = allowedClasses.length ? allowedClasses.map(c => `
+        <button class="class-item ${c===className ? 'active' : ''}" data-class="${escapeHtml(c)}">${escapeHtml(c)}</button>
+      `).join("") : `<div class="empty">Inicia sessió per a veure les classes assignades.</div>`;
+      [...$("classList").querySelectorAll("[data-class]")].forEach(btn => {
+        btn.addEventListener("click", () => switchClass(btn.dataset.class));
+      });
+      $("currentClass").textContent = className || "—";
+    }
+
+    function renderStudents(){
+      const term = $("studentSearch").value.trim().toLowerCase();
+      const list = state.students.filter(s => (s.studentName || "").toLowerCase().includes(term));
+      if(!list.length){
+        $("studentList").innerHTML = `<div class="empty">No hi ha alumnes en aquesta classe encara.</div>`;
+        return;
+      }
+      $("studentList").innerHTML = list.map(s => `
+        <div class="student-item ${s.id===state.currentStudentId ? "active" : ""}" data-id="${s.id}">
+          <div class="student-name">${escapeHtml(s.studentName || "Sense nom")}</div>
+          <div class="student-meta">${escapeHtml(s.course || "")}${s.lastEditor ? " · Últim: " + escapeHtml(s.lastEditor) : ""}</div>
+        </div>
+      `).join("");
+      [...$("studentList").querySelectorAll("[data-id]")].forEach(item => {
+        item.addEventListener("click", () => loadStudent(item.dataset.id));
+      });
+    }
+
+    async function saveClasses(){
+      await setDoc(classDoc(), { classes: state.classes, updatedAt: serverTimestamp() }, { merge:true });
+    }
+
+    async function loadClasses(){
+      try{
+        const snap = await getDoc(classDoc());
+        if(snap.exists() && Array.isArray(snap.data().classes) && snap.data().classes.length){
+          state.classes = snap.data().classes;
+        }else{
+          await saveClasses();
+        }
+        await seedInitialData();
+        renderClassUI();
+        renderTeachers();
+        updateRegisterClassMode();
+        subscribeTeachers();
+        setStatus("Sistema preparat. Selecciona o crea un mestre.");
+        $("authMessage").textContent = "Selecciona un mestre o crea'n un de nou.";
+      }catch(err){
+        console.error(err);
+        setStatus("Error amb Firestore. Revisa les regles o la configuració.", true);
+        $("authMessage").textContent = "No s'han pogut carregar les dades inicials.";
+      }
+    }
+
+    function subscribeStudents(){
+      if(state.unsub) state.unsub();
+      if(!state.currentClass){
+        $("studentList").innerHTML = `<div class="empty">Inicia sessió per a carregar l'alumnat.</div>`;
+        return;
+      }
+      $("studentList").innerHTML = `<div class="empty">Carregant alumnes de ${state.currentClass}...</div>`;
+      const q = query(studentsCol(state.currentClass), orderBy("studentNameLower"));
+      state.unsub = onSnapshot(q, snap => {
+        state.students = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+        renderStudents();
+      }, err => {
+        console.error(err);
+        $("studentList").innerHTML = `<div class="empty">No s'han pogut carregar els alumnes.</div>`;
+      });
+    }
+
+    async function switchClass(className){
+      const allowedClasses = getTeacherAllowedClasses(state.teacher);
+      if(state.teacher && !allowedClasses.includes(className)) return;
+      state.currentClass = className;
+      state.currentStudentId = null;
+      state.currentStudentData = null;
+      renderClassUI();
+      clearForm();
+      subscribeStudents();
+    }
+
+    function setSectionDisabled(root, disabled){
+      if(!root) return;
+      root.classList.toggle('field-disabled', disabled);
+      root.querySelectorAll('input, select, textarea, button').forEach(el => {
+        if(el.id === 'output') return;
+        if(el.id === 'previewBottom' || el.id === 'copyBottom') return;
+        el.disabled = disabled;
+      });
+    }
+
+    function applyEditingPermissions(){
+      const specialist = isSpecialistTeacher(state.teacher);
+      const specialistKey = getSpecialistSubjectKey();
+      const banner = $("specialistEditBanner");
+      if(banner){
+        if(specialist){
+          banner.style.display = 'block';
+          banner.textContent = `Mode especialista: només pots editar ${specialistLabels[specialistKey] || specialistKey}.`;
+        }else{
+          banner.style.display = 'none';
+          banner.textContent = '';
+        }
+      }
+      setSectionDisabled($("generalPanel"), specialist);
+      setSectionDisabled($("personalPanel"), specialist);
+      setSectionDisabled($("supportsPanel"), specialist);
+      $("newStudentBtn").disabled = specialist;
+      $("deleteStudentBtn").disabled = specialist;
+      document.querySelectorAll('.subject-card').forEach(card => {
+        const subjectKey = card.dataset.subjectKey;
+        const locked = specialist && subjectKey !== specialistKey;
+        card.classList.toggle('locked-specialist', locked);
+        card.querySelectorAll('input, select, textarea').forEach(el => {
+          el.disabled = locked;
+        });
+      });
+    }
+
+    function collectData(){
+      const data = {
+        general:{
+          alumne:valueOf("alumne"),
+          genere:valueOf("genere"),
+          curs:valueOf("curs"),
+          specialistNotes:valueOf("specialistNotes")
+        },
+        personal:{
+          apren:valueOf("apren"),
+          ritme:valueOf("ritme"),
+          autonomia:valueOf("autonomia"),
+          destaca:valueOf("destaca"),
+          habits:valueOf("habits"),
+          actitud:valueOf("actitud"),
+          social:valueOf("social"),
+          assistencia:valueOf("assistencia"),
+          obs_personals:valueOf("obs_personals")
+        },
+        supports:{
+          suports:valueOf("suports"),
+          reforc:valueOf("reforc"),
+          materials:valueOf("materials"),
+          metodologia:valueOf("metodologia"),
+          avaluacio:valueOf("avaluacio"),
+          obs_suports:valueOf("obs_suports")
+        },
+        subjects:{}
+      };
+      subjects.forEach(subject => {
+        data.subjects[subject.key] = {
+          nivell:valueOf(`${subject.key}_nivell`),
+          obs:valueOf(`${subject.key}_obs`),
+          ok:getChecked(`${subject.key}_ok`),
+          ko:getChecked(`${subject.key}_ko`)
+        };
+      });
+      return data;
+    }
+
+    function fillData(data={}){
+      const general = data.general || {};
+      const personal = data.personal || {};
+      const supports = data.supports || {};
+      setValue("alumne", general.alumne || "");
+      setValue("genere", general.genere || "alumne");
+      setValue("curs", general.curs || "primer");
+      setValue("specialistNotes", general.specialistNotes || "");
+      setValue("apren", personal.apren || "");
+      setValue("ritme", personal.ritme || "adequat");
+      setValue("autonomia", personal.autonomia || "és capaç de treballar amb autonomia");
+      setValue("destaca", personal.destaca || "");
+      setValue("habits", personal.habits || "");
+      setValue("actitud", personal.actitud || "");
+      setValue("social", personal.social || "");
+      setValue("assistencia", personal.assistencia || "normal");
+      setValue("obs_personals", personal.obs_personals || "");
+      setValue("suports", supports.suports || "");
+      setValue("reforc", supports.reforc || "");
+      setValue("materials", supports.materials || "");
+      setValue("metodologia", supports.metodologia || "");
+      setValue("avaluacio", supports.avaluacio || "");
+      setValue("obs_suports", supports.obs_suports || "");
+
+      subjects.forEach(subject => {
+        const block = (data.subjects || {})[subject.key] || {};
+        setValue(`${subject.key}_nivell`, block.nivell || "");
+        setValue(`${subject.key}_obs`, block.obs || "");
+        setChecked(`${subject.key}_ok`, block.ok || []);
+        setChecked(`${subject.key}_ko`, block.ko || []);
+      });
+
+      updateLabels();
+      applyEditingPermissions();
+      updatePreview();
+    }
+
+    function clearForm(){
+      fillData({});
+      $("output").value = "";
+      $("lastSavedTag").textContent = "Formulari net";
+      state.currentStudentId = null;
+      state.currentStudentData = null;
+      updateLabels();
+      applyEditingPermissions();
+    }
+
+    function updateLabels(){
+      $("currentClass").textContent = state.currentClass || "—";
+      $("currentStudent").textContent = valueOf("alumne") || "—";
+    }
+
+    function sentenceForLevel(value, genderWord){
+      if(!value) return "";
+      if(["EXCEL·LENT","NOTABLE","SUFICIENT"].includes(value)){
+        return `Els resultats han sigut ${value} i assoleix els sabers proposats.`;
+      }
+      if(value.includes("MALGRAT L'ESFORÇ")){
+        return `${genderWord} presenta dificultats per a assimilar les competències de l'àrea. És per això que, malgrat l'esforç realitzat, ha de treballar més per a assimilar els sabers proposats.`;
+      }
+      return `${genderWord} presenta dificultats per a assimilar les competències de l'àrea. És per això que ha de treballar per a assimilar els sabers proposats.`;
+    }
+
+    function joinList(items=[]){ return items.join(" ; "); }
+
+    function generateReport(){
+      const data = collectData();
+      const alumne = (data.general.alumne || "").trim();
+      const genderWord = data.general.genere === "alumna" ? "L'alumna" : "L'alumne";
+      const curs = data.general.curs || "";
+      const lines = [];
+
+      lines.push("RESULTATS OBTINGUTS EN LA SEGONA AVALUACIÓ");
+      lines.push("");
+      lines.push(`${genderWord}${alumne ? " " + alumne : ""} ha adquirit les competències específiques relatives a les àrees de ${curs} curs d'Educació Primària de la següent manera:`);
+      lines.push("");
+
+      subjects.forEach(subject => {
+        const s = data.subjects[subject.key];
+        if(!s || (!s.nivell && !s.obs && !s.ok.length && !s.ko.length)) return;
+        lines.push(`${subject.name}:`);
+        const base = sentenceForLevel(s.nivell, genderWord);
+        if(base) lines.push(base);
+        if(s.ok.length) lines.push(`Destacant els progressos i esforços quant a les següents competències: ${joinList(s.ok)}.`);
+        if(s.ko.length) lines.push(`No obstant això, ha de seguir esforçant-se en superar les dificultats quant a les següents competències que cal continuar treballant: ${joinList(s.ko)}.`);
+        if(s.obs) lines.push(`Observacions: ${s.obs}.`);
+        lines.push("");
+      });
+
+      const p = data.personal;
+      lines.push("Aspectes personals i evolutius (progressos, talents, fortaleses, febleses, dificultats):");
+      let personal = `${genderWord}${alumne ? " " + alumne : ""}`;
+      if(p.apren) personal += ` aprén amb més facilitat ${p.apren}`;
+      if(p.ritme) personal += `${p.apren ? " i " : " "}presenta un ritme d'aprenentatge ${p.ritme}`;
+      if(p.autonomia) personal += `. En relació al seu nivell d'autonomia en el treball, ${p.autonomia}`;
+      if(p.destaca) personal += `. Les tasques en les quals destaca i amb les quals aprén amb més facilitat són ${p.destaca}`;
+      personal += ".";
+      lines.push(personal);
+      if(p.habits) lines.push(`Quant als seus hàbits de treball, ${p.habits}.`);
+      if(p.actitud) lines.push(`En relació a la seua actitud, ${p.actitud}.`);
+      if(p.social) lines.push(`Finalment, a nivell afectiu i social, ${p.social}.`);
+      if(p.assistencia) lines.push(`La seua assistència a classe és ${p.assistencia}.`);
+      if(p.obs_personals) lines.push(`Observacions lliures: ${p.obs_personals}.`);
+      lines.push("");
+
+      const spt = data.supports;
+      const hasSupportsSection = !!(spt.suports || spt.reforc || spt.materials || spt.metodologia || spt.avaluacio || spt.obs_suports);
+      if(hasSupportsSection){
+        lines.push("Mesures i suports d'atenció educativa:");
+        if(spt.suports || spt.reforc){
+          lines.push(`${genderWord}${alumne ? " " + alumne : ""} rep el suport/l'atenció educativa de ${spt.suports || "---"} per a reforçar aspectes relacionats amb ${spt.reforc || "---"}.`);
+        }
+        if(spt.materials) lines.push(`Quant als materials, utilitza ${spt.materials}.`);
+        if(spt.metodologia) lines.push(`A nivell metodològic, ${spt.metodologia}.`);
+        if(spt.avaluacio) lines.push(`Finalment, en referència a l'avaluació, ${spt.avaluacio}.`);
+        if(spt.obs_suports) lines.push(`Observacions lliures: ${spt.obs_suports}.`);
+        lines.push("");
+      }
+      if(data.general.specialistNotes){
+        lines.push(`Observació general: ${data.general.specialistNotes}.`);
+      }
+
+      return lines.join("\n");
+    }
+
+    function updatePreview(){
+      $("output").value = generateReport();
+    }
+
+    async function createClass(){
+      alert("Ara les classes noves es creen des de la pantalla inicial, en donar d'alta un mestre nou.");
+    }
+
+    async function createStudent(){
+      if(!state.currentClass){
+        alert("Primer selecciona una classe.");
+        return;
+      }
+      const name = prompt(`Nom del nou alumne per a ${state.currentClass}:`);
+      if(!name) return;
+      const studentName = name.trim();
+      if(!studentName) return;
+
+      const teacher = valueOf("teacherName").trim();
+      const role = valueOf("teacherRole");
+      const id = `${slugify(studentName)}-${Date.now()}`;
+      const payload = {
+        className: state.currentClass,
+        studentName,
+        studentNameLower: studentName.toLowerCase(),
+        course: "primer",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        lastEditor: teacher ? `${teacher} (${role})` : role,
+        data:{
+          general:{ alumne:studentName, genere:"alumne", curs:"primer", specialistNotes:"" },
+          personal:{},
+          supports:{},
+          subjects:{}
+        }
+      };
+      await setDoc(studentDoc(state.currentClass, id), payload, { merge:true });
+      state.currentStudentId = id;
+      fillData(payload.data);
+      setValue("alumne", studentName);
+      $("lastSavedTag").textContent = "Nou alumne creat";
+      setStatus("Alumne creat");
+    }
+
+    async function loadStudent(id){
+      const snap = await getDoc(studentDoc(state.currentClass, id));
+      if(!snap.exists()) return;
+      const data = snap.data();
+      state.currentStudentId = id;
+      state.currentStudentData = data.data || {};
+      fillData(data.data || {});
+      setValue("alumne", data.studentName || "");
+      setValue("curs", data.course || "primer");
+      $("lastSavedTag").textContent = data.lastEditor ? `Últim canvi: ${data.lastEditor}` : "Alumne carregat";
+      renderStudents();
+      updateLabels();
+    }
+
+    async function saveStudent(){
+      if(!state.currentClass){
+        alert("Selecciona una classe.");
+        return;
+      }
+      const specialist = isSpecialistTeacher(state.teacher);
+      if(specialist && !state.currentStudentId){
+        alert("L'especialista ha de seleccionar un alumne existent.");
+        return;
+      }
+      const studentName = valueOf("alumne").trim();
+      if(!studentName){
+        alert("Has d'escriure el nom de l'alumne/a.");
+        return;
+      }
+      const teacher = valueOf("teacherName").trim();
+      const role = valueOf("teacherRole");
+      const data = collectData();
+      const id = state.currentStudentId || `${slugify(studentName)}-${Date.now()}`;
+      state.currentStudentId = id;
+
+      let finalData = data;
+      if(specialist){
+        const specialistKey = getSpecialistSubjectKey();
+        const baseData = structuredClone(state.currentStudentData || {});
+        baseData.subjects = baseData.subjects || {};
+        baseData.subjects[specialistKey] = data.subjects[specialistKey] || { nivell:'', obs:'', ok:[], ko:[] };
+        finalData = baseData;
+      }
+
+      await setDoc(studentDoc(state.currentClass, id), {
+        className: state.currentClass,
+        studentName,
+        studentNameLower: studentName.toLowerCase(),
+        course: data.general.curs || "",
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        lastEditor: specialist
+          ? `${teacher ? teacher : role} (${specialistLabels[getSpecialistSubjectKey()] || getSpecialistSubjectKey()})`
+          : (teacher ? `${teacher} (${role})` : role),
+        data: finalData
+      }, { merge:true });
+
+      state.currentStudentData = structuredClone(finalData);
+      $("lastSavedTag").textContent = `Guardat per ${teacher ? teacher : role}`;
+      setStatus("Canvis guardats");
+      updatePreview();
+      updateLabels();
+    }
+
+    async function removeStudent(){
+      if(!state.currentStudentId){
+        alert("No hi ha cap alumne seleccionat.");
+        return;
+      }
+      const name = valueOf("alumne") || "aquest alumne";
+      if(!confirm(`Vols eliminar ${name} de la classe ${state.currentClass}?`)) return;
+      await deleteDoc(studentDoc(state.currentClass, state.currentStudentId));
+      state.currentStudentId = null;
+      clearForm();
+      $("lastSavedTag").textContent = "Alumne eliminat";
+      setStatus("Alumne eliminat");
+    }
+
+    async function copyReport(){
+      const text = generateReport();
+      $("output").value = text;
+      try{
+        await navigator.clipboard.writeText(text);
+        setStatus("Informe copiat al portapapers");
+      }catch(err){
+        alert("No s'ha pogut copiar automàticament. Copia el text des de la vista prèvia.");
+      }
+    }
+
+    function attachEvents(){
+      $("newClassBtn").addEventListener("click", createClass);
+      $("newStudentBtn").addEventListener("click", createStudent);
+      $("classSelect").addEventListener("change", e => switchClass(e.target.value));
+      $("studentSearch").addEventListener("input", renderStudents);
+
+      $("saveTop").addEventListener("click", saveStudent);
+      $("saveSide").addEventListener("click", saveStudent);
+      $("deleteStudentBtn").addEventListener("click", removeStudent);
+
+      $("previewTop").addEventListener("click", updatePreview);
+      $("previewBottom").addEventListener("click", updatePreview);
+
+      $("copyTop").addEventListener("click", copyReport);
+      $("copySide").addEventListener("click", copyReport);
+      $("copyBottom").addEventListener("click", copyReport);
+
+      $("blankSide").addEventListener("click", () => {
+        clearForm();
+        renderStudents();
+      });
+
+      $("registerClassMode").addEventListener("change", () => { updateRegisterClassMode(); updateRegisterTeacherType(); });
+      $("registerTeacherType").addEventListener("change", updateRegisterTeacherType);
+      $("createTeacherBtn").addEventListener("click", createTeacherAccount);
+      $("deleteTeacherBtn").addEventListener("click", deleteTeacherAccount);
+      $("loginTeacherBtn").addEventListener("click", loginTeacher);
+      $("logoutBtn").addEventListener("click", logoutTeacher);
+      $("loginPassword").addEventListener("keydown", e => {
+        if(e.key === "Enter") loginTeacher();
+      });
+
+      document.querySelectorAll("input,select,textarea").forEach(el => {
+        el.addEventListener("change", updatePreview);
+        el.addEventListener("input", updateLabels);
+      });
+    }
+
+    buildSubjects();
+    renderSpecialtyOptions();
+    renderClassUI();
+    attachEvents();
+    clearForm();
+    updateRegisterClassMode();
+    updateRegisterTeacherType();
+    loadClasses();
+
+    console.log("Important: perquè això funcione sense login, les regles de Firestore han de permetre lectura i escriptura des d'aquest HTML.");
+  </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const saveButtons = [
+    document.getElementById("saveTop"),
+    document.getElementById("saveSide")
+  ].filter(Boolean);
+
+  if (!saveButtons.length) return;
+
+  function setState(state){
+    saveButtons.forEach(btn=>{
+      btn.classList.remove("save-clean","save-dirty");
+      btn.classList.add(state==="dirty" ? "save-dirty" : "save-clean");
+      btn.style.color = "#fff";
+    });
+  }
+
+  function markDirty(){
+    setState("dirty");
+  }
+
+  function markSaved(){
+    setState("clean");
+  }
+
+  // 🔹 SOLO inputs reales del informe (excluyendo selects de clase/alumno)
+  const editableFields = [...document.querySelectorAll(
+    "textarea, input[type='text'], input[type='number'], input[type='checkbox'], .subject-card select"
+  )].filter(el => !['classSelect','loginTeacherSelect','registerTeacherType','registerClassMode','registerExistingClass','registerSpecialty'].includes(el.id));
+
+  editableFields.forEach(el=>{
+    el.addEventListener("input", markDirty);
+    el.addEventListener("change", markDirty);
+  });
+
+  // Guardar → volver a verde
+  saveButtons.forEach(btn=>{
+    btn.addEventListener("click", function(){
+      setTimeout(markSaved, 200);
+    });
+  });
+
+  // estado inicial
+  markSaved();
+});
+</script></body>
+</html>
