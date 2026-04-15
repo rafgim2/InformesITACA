@@ -319,7 +319,6 @@
     }
     .field-disabled{
       opacity:.55;
-      pointer-events:none;
       filter:grayscale(.15);
     }
     .subject-card.locked-specialist{
@@ -377,6 +376,31 @@
   color:#ffffff !important;
   border-color:#b91c1c !important;
 }
+
+.logout-btn {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  filter: none !important;
+}
+
+
+.logout-holder{
+  margin-left:auto;
+  opacity:1 !important;
+  filter:none !important;
+  pointer-events:auto !important;
+}
+.logout-holder .logout-btn{
+  opacity:1 !important;
+  filter:none !important;
+  pointer-events:auto !important;
+}
+.panel .sticky-tools > .logout-holder,
+.panel .sticky-tools > .logout-holder *{
+  opacity:1 !important;
+  filter:none !important;
+}
+
 </style></head>
 <body>
 
@@ -539,7 +563,7 @@
 <div class="panel" id="generalPanel" style="margin-bottom:16px;">
 <div class="sticky-tools">
 <span class="teacher-badge" id="loggedTeacherBadge">Mestre: —</span>
-<button class="ghost logout-btn" id="logoutBtn">Canviar de mestre</button>
+<span class="logout-holder"><button class="ghost logout-btn" id="logoutBtn">Canviar de mestre</button></span>
 <button class="primary" id="saveTop">Guardar</button>
 <button class="secondary" id="previewTop">Generar vista prèvia</button>
 <button class="secondary" id="copyTop">Copiar informe final</button>
@@ -547,7 +571,7 @@
 <span class="tag" id="lastSavedTag">Sense guardar encara</span>
 </div>
 </div>
-<div class="panel" style="margin-bottom:16px;">
+<div class="panel" id="generalDataPanel" style="margin-bottom:16px;">
 <div class="section-title">Dades generals</div>
 <div class="row">
 <div class="c4">
@@ -1088,6 +1112,7 @@
     ];
 
     const specialistLabels = Object.fromEntries(specialistOptions.map(item => [item.key, item.label]));
+    const specialistSubjectKeys = specialistOptions.map(item => item.key);
 
     function isSpecialistTeacher(teacher){
       return !!teacher && teacher.teacherType === 'specialist' && !!teacher.specialty;
@@ -1101,6 +1126,10 @@
 
     function getSpecialistSubjectKey(){
       return isSpecialistTeacher(state.teacher) ? state.teacher.specialty : null;
+    }
+
+    function isTutorLockedSubject(subjectKey){
+      return !isSpecialistTeacher(state.teacher) && specialistSubjectKeys.includes(subjectKey);
     }
 
     const $ = id => document.getElementById(id);
@@ -1549,8 +1578,10 @@
       if(!root) return;
       root.classList.toggle('field-disabled', disabled);
       root.querySelectorAll('input, select, textarea, button').forEach(el => {
+        if(el.classList.contains('logout-btn')) return;
         if(el.id === 'output') return;
         if(el.id === 'previewBottom' || el.id === 'copyBottom') return;
+        if(el.id === 'logoutBtn') return;
         el.disabled = disabled;
       });
     }
@@ -1562,20 +1593,24 @@
       if(banner){
         if(specialist){
           banner.style.display = 'block';
-          banner.textContent = `Mode especialista: només pots editar ${specialistLabels[specialistKey] || specialistKey}.`;
+          banner.textContent = `Mode especialista: només pots editar ${specialistLabels[specialistKey] || specialistKey}. També pots canviar de mestre amb el botó superior.`;
+        }else if(state.teacher){
+          banner.style.display = 'block';
+          banner.textContent = 'Mode tutor/a: les àrees dels especialistes estan bloquejades i no es poden modificar.';
         }else{
           banner.style.display = 'none';
           banner.textContent = '';
         }
       }
-      setSectionDisabled($("generalPanel"), specialist);
+      setSectionDisabled($("generalPanel"), false);
+      setSectionDisabled($("generalDataPanel"), specialist);
       setSectionDisabled($("personalPanel"), specialist);
       setSectionDisabled($("supportsPanel"), specialist);
       $("newStudentBtn").disabled = specialist;
       $("deleteStudentBtn").disabled = specialist;
       document.querySelectorAll('.subject-card').forEach(card => {
         const subjectKey = card.dataset.subjectKey;
-        const locked = specialist && subjectKey !== specialistKey;
+        const locked = (specialist && subjectKey !== specialistKey) || isTutorLockedSubject(subjectKey);
         card.classList.toggle('locked-specialist', locked);
         card.querySelectorAll('input, select, textarea').forEach(el => {
           el.disabled = locked;
@@ -1834,6 +1869,15 @@
         baseData.subjects = baseData.subjects || {};
         baseData.subjects[specialistKey] = data.subjects[specialistKey] || { nivell:'', obs:'', ok:[], ko:[] };
         finalData = baseData;
+      }else if(state.currentStudentData){
+        const baseData = structuredClone(state.currentStudentData || {});
+        baseData.subjects = baseData.subjects || {};
+        finalData.subjects = finalData.subjects || {};
+        for(const subjectKey of specialistSubjectKeys){
+          if(baseData.subjects[subjectKey]){
+            finalData.subjects[subjectKey] = structuredClone(baseData.subjects[subjectKey]);
+          }
+        }
       }
 
       await setDoc(studentDoc(state.currentClass, id), {
